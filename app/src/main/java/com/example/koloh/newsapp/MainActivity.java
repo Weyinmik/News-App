@@ -15,7 +15,9 @@ public class MainActivity extends AppCompatActivity {
         // Create a fake list of news feed category.
         ArrayList<NewsFeedActivity> news = new ArrayList<NewsFeedActivity> ();
         news.add ( new NewsFeedActivity ( "Technology", "How can I invest in Bitcoin", "July 1, 2018" ) );
-
+        news.add ( new NewsFeedActivity ( "Technology", "How can I invest in Bitcoin", "July 1, 2018" ) );
+        news.add ( new NewsFeedActivity ( "Technology", "How can I invest in Bitcoin", "July 1, 2018" ) );
+        news.add ( new NewsFeedActivity ( "Technology", "How can I invest in Bitcoin", "July 1, 2018" ) );
 
         // Find a reference to the {@link ListView} in the layout
         ListView newsListView = (ListView) findViewById ( R.id.list );
