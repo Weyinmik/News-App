@@ -14,7 +14,7 @@ public class NewsFeedActivity {
     private String newsDate;
     private String newsUrl;
 
-    public NewsFeedActivity(String title, String section, String author, String date, String url) {
+    public NewsFeedActivity(String section, String title, String author, String date, String url) {
         newsTitle = title;
         newsSection = section;
         newsAuthor = author;

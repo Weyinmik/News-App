@@ -120,13 +120,13 @@ public class MainActivity extends AppCompatActivity
         View progressBar = findViewById ( R.id.indicator );
         progressBar.setVisibility ( View.GONE );
 
-        // Set empty state text to display "No earthquakes found."
+        // Set empty state text to display a text
         emptyStateTextView.setText ( R.string.no_news_found );
-        // Clear the adapter of previous earthquake data
+        // Clear the adapter of previous newsfeed data
 
         adapter.clear ();
         // check if there are articles then show them
-        // If there is a valid list of {@link Earthquake}s, then add them to the adapter's
+        // If there is a valid list of {@link NewsFeedActvity}s, then add them to the adapter's
         // data set. This will trigger the ListView to update.
         if (newsList != null && !newsList.isEmpty ()) {
             adapter.addAll ( newsList );
