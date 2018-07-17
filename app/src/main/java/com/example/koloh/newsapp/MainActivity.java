@@ -20,13 +20,12 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<List<NewsFeedActivity>> {
 
-    private static final String TAG = MainActivity.class.getSimpleName ();
 
     /**
-     * URL for earthquake data from the USGS dataset
+     * URL for newsfeed data from the Guardian Api
      */
-    private static final String GUARDIAN_REQUEST_URL =
-            "https://content.guardianapis.com/search?show-elements=all&order-by=newest&show-tags=author&q=%22technology%20news%22&api-key=640deee2-109e-47f6-80d1-8038dc69cbcd";
+    public static final String GUARDIAN_REQUEST_URL =
+            "https://content.guardianapis.com/search?show-elements=all&order-by=relevance&show-tags=author&q=%22technology%20news%22&api-key=640deee2-109e-47f6-80d1-8038dc69cbcd";
 
 
     private static final int NEWSFEED_LOADER_ID = 1;
@@ -108,7 +107,7 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public Loader<List<NewsFeedActivity>> onCreateLoader(int id, Bundle args) {
+    public Loader<List<NewsFeedActivity>> onCreateLoader(int i, Bundle bundle) {
 
 
         // Create a new loader for the given URL
@@ -122,7 +121,7 @@ public class MainActivity extends AppCompatActivity
         progressBar.setVisibility ( View.GONE );
 
         // Set empty state text to display "No earthquakes found."
-        emptyStateTextView.setText ( getText ( R.string.empty_text ) );
+        emptyStateTextView.setText ( R.string.no_news_found );
         // Clear the adapter of previous earthquake data
 
         adapter.clear ();
@@ -131,6 +130,7 @@ public class MainActivity extends AppCompatActivity
         // data set. This will trigger the ListView to update.
         if (newsList != null && !newsList.isEmpty ()) {
             adapter.addAll ( newsList );
+            emptyStateTextView.setVisibility ( View.GONE );
         }
     }
 
