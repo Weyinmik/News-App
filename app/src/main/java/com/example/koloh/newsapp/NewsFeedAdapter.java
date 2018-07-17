@@ -13,47 +13,56 @@ import java.util.List;
 
 public class NewsFeedAdapter extends ArrayAdapter<NewsFeedActivity> {
 
-    public NewsFeedAdapter(Context context, List<NewsFeedActivity> news) {
+        private static final String NEW_LINE = "\n";
+        private static final int ZERO = 0;
+        private static final int MAX_LENGTH_LINE_1 = 11;
+        private static final String T = "T";
+        private static final String Z = "Z";
+        private static final String EMPTY_TEXT = "";
+        private final Context context;
 
-        super ( context, 0, news );
-    }
 
-    @NonNull
-    @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        // Check if the existing view is being reused, otherwise inflate the view
-        View listItemView = convertView;
-        if (listItemView == null) {
-            listItemView = LayoutInflater.from ( getContext () ).inflate (
-                    R.layout.news_list_item, parent, false );
+        public NewsFeedAdapter(@NonNull Context context, List<NewsFeedActivity> newsfeed) {
+                super ( context, 0, newsfeed );
+                this.context = context;
         }
 
-        // Get the {@link JobNews} object located at this position in the list
-        NewsFeedActivity currentJobNews = getItem ( position );
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View rootView = convertView;
+                ViewHolderItem viewHolderItem;
+                if (rootView == null) {
+                        rootView = LayoutInflater.from ( context ).inflate ( R.layout.news_list_item, parent, false );
+                        viewHolderItem = new ViewHolderItem ();
+                        viewHolderItem.titleTextView = rootView.findViewById ( R.id.title );
+                        viewHolderItem.sectionTextView = rootView.findViewById ( R.id.section );
+                        viewHolderItem.authorTextView = rootView.findViewById ( R.id.author );
+                        viewHolderItem.dateTextView = rootView.findViewById ( R.id.date );
+
+                        rootView.setTag ( viewHolderItem );
+                } else {
+                        viewHolderItem = (ViewHolderItem) rootView.getTag ();
+                }
+                NewsFeedActivity currentArticle = getItem ( position );
+                viewHolderItem.titleTextView.setText ( currentArticle.getTitle () );
+                viewHolderItem.sectionTextView.setText ( currentArticle.getSection () );
+                viewHolderItem.authorTextView.setText ( currentArticle.getAuthor () );
+                viewHolderItem.dateTextView.setText ( makeDateInTwoLines ( currentArticle.getDate () ) );
+                return rootView;
+        }
+
+        private String makeDateInTwoLines(String inputDate) {
+                String date = inputDate.substring ( ZERO, MAX_LENGTH_LINE_1 ).replace ( T, EMPTY_TEXT ); // get first 11 chars to it (Date like 2018-3-13T)
+                String time = inputDate.substring ( MAX_LENGTH_LINE_1 ).replace ( Z, EMPTY_TEXT ); // get all remained chars
+                return date + NEW_LINE + time;
+        }
 
 
-        // Find the TextView in the list_item.xml layout with the ID news_category
-        TextView newsCategoryTextView = (TextView) listItemView.findViewById ( R.id.news_category );
-        // Get the version name from the current NewsFeedActivity object and
-        // set this text on the news_category TextView
-        newsCategoryTextView.setText ( currentJobNews.getNewsCategory () );
-
-        // Find the TextView in the list_item.xml layout with the ID news_title
-        TextView newsTitleTextView = (TextView) listItemView.findViewById ( R.id.news_title );
-        // Get the version name from the current NewsFeedActivity object and
-        // set this text on the news_title TextView
-        newsTitleTextView.setText ( currentJobNews.getNewsTitle () );
-
-
-        // Find the TextView in the list_item.xml layout with the ID date_published
-        TextView datepublishedTextView = (TextView) listItemView.findViewById ( R.id.date_published );
-        // Get the version number from the current date of news object and
-        // set this text on the date_published TextView
-        datepublishedTextView.setText ( currentJobNews.getDatePublished () );
-
-
-        // Return the whole list item layout (containing 3 TextViews )
-        // so that it can be shown in the ListView
-        return listItemView;
-    }
+        private static class ViewHolderItem {
+                TextView titleTextView;
+                TextView sectionTextView;
+                TextView authorTextView;
+                TextView dateTextView;
+        }
 }

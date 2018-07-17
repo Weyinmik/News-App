@@ -7,56 +7,46 @@ package com.example.koloh.newsapp;
  */
 public class NewsFeedActivity {
 
-    // Category of a particular news article
 
-    private String newsDefaultCategory;
+    private String newsTitle;
+    private String newsSection;
+    private String newsAuthor;
+    private String newsDate;
+    private String newsUrl;
 
+    public NewsFeedActivity(String title, String section, String author, String date, String url) {
+        newsTitle = title;
+        newsSection = section;
+        newsAuthor = author;
+        newsDate = date;
+        newsUrl = url;
+    }
 
-    // Title of a particular news article
+    public String getTitle() {
+        return newsTitle;
+    }
 
-    private String newsDefaultTitle;
+    public String getSection() {
+        return newsSection;
+    }
 
+    public String getAuthor() {
+        return newsAuthor;
+    }
 
-    // Date when a particular news article is published
+    public String getDate() {
+        return newsDate;
+    }
 
-    private String newsDefaultDatePublished;
-
-
-    /**
-     * Create a new JobNews object.
-     *
-     * @param newsCategory  the category of the news article
-     * @param newsTitle     the title of the news article
-     * @param datePublished the date the news article was published
-     */
-    public NewsFeedActivity(String newsCategory, String newsTitle, String datePublished) {
-        newsDefaultCategory = newsCategory;
-        newsDefaultTitle = newsTitle;
-        newsDefaultDatePublished = datePublished;
-
+    public String getUrl() {
+        return newsUrl;
     }
 
 
-    // Returns the default category of the news article.
-
-    public String getNewsCategory() {
-        return newsDefaultCategory;
-    }
 
 
-    // Returns  the title of the news article.
-
-    public String getNewsTitle() {
-        return newsDefaultTitle;
-    }
-
-
-    // Returns  the date the news article was published.
-
-    public String getDatePublished() {
-        return newsDefaultDatePublished;
-    }
 
 
 }
+
 
