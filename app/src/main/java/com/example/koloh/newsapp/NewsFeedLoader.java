@@ -15,7 +15,7 @@ public class NewsFeedLoader extends AsyncTaskLoader<List<NewsFeedActivity>> {
     /**
      * Tag for log messages
      */
-    private static final String NEWS_TAG = NewsFeedLoader.class.getName ();
+    public static final String NEWS_TAG = NewsFeedLoader.class.getName ();
 
     /**
      * Query URL

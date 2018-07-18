@@ -151,12 +151,13 @@ public final class NewsQueryUtils {
             JSONObject response = jsonObject.getJSONObject ( "response" );
             JSONArray results = response.getJSONArray ( "results" );
 
+
             for (int i = 0; i < results.length (); i++) {
                 JSONObject currentObject = results.getJSONObject ( i );
 
                 String title = currentObject.getString ( "webTitle" );
                 String section = currentObject.getString ( "sectionName" );
-                String author = currentObject.getJSONArray ( "tags" ).getJSONObject ( 0 ).getString ( "webTitle" );
+                String author = currentObject.getJSONArray ( "tags" ).getJSONObject ( 0 ).getString ( "" );
                 String date = currentObject.getString ( "webPublicationDate" ); //
                 String url = currentObject.getString ( "webUrl" );
 
