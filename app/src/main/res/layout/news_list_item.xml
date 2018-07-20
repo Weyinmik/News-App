@@ -14,14 +14,14 @@
         android:textColor="@color/text_primary"
         android:textSize="@dimen/text_primary"
         app:layout_constraintTop_toTopOf="parent"
-        
+        android:layout_marginLeft="8dp"
         tools:text="TextView" />
 
     <TextView
         android:id="@+id/section_textview"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="26dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:gravity="center"

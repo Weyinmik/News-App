@@ -67,20 +67,19 @@ public class NewsFeedLoader extends AsyncTaskLoader<List<NewsFeedActivity>> {
                     line = reader.readLine ();
                 }
                 JSONObject data = new JSONObject ( output.toString () );
-                JSONObject response = data.getJSONObject ( String.valueOf ( R.string.root_jsonobject_key ) );
-                JSONArray results = response.getJSONArray ( String.valueOf ( R.string.result_jsonarry_key ) );
+                JSONObject response = data.getJSONObject ( "response" );
+                JSONArray results = response.getJSONArray ( "results" );
                 for (int i = 0; i < results.length (); i++) {
                     JSONObject currentNews = results.getJSONObject ( i );
-
-                    String section = currentNews.getString ( String.valueOf ( R.string.sectionName_jsonprimitive_key ) );
-                    String date = currentNews.getString ( String.valueOf ( R.string.webPublicationDate_jsonprimitive_key ) );
-                    String title = currentNews.getString ( String.valueOf ( R.string.WebTitle_jsonprimitive_key ) );
-                    String webUrl = currentNews.getString ( String.valueOf ( R.string.webUrl_jsonprimitive_key ) );
-                    JSONArray tags = currentNews.getJSONArray ( String.valueOf ( R.string.tag_jsonarry_key ) );
+                    String section = currentNews.getString ( "sectionName" );
+                    String date = currentNews.getString ( "webPublicationDate" );
+                    String title = currentNews.getString ( "webTitle" );
+                    String webUrl = currentNews.getString ( "webUrl" );
+                    JSONArray tags = currentNews.getJSONArray ( "tags" );
                     String authorName = "";
                     if (tags.length () > 0) {
                         JSONObject author = tags.getJSONObject ( 0 );
-                        authorName = author.getString ( String.valueOf ( R.string.WebTitle_jsonprimitive_key ) );
+                        authorName = author.getString ( "webTitle" );
                     }
                     newsfeed.add ( new NewsFeedActivity ( title, section, date, webUrl, authorName ) );
                 }

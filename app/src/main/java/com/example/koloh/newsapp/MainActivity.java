@@ -1,6 +1,5 @@
 package com.example.koloh.newsapp;
 
-import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
@@ -25,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<List<NewsFeedActivity>> {
+        implements android.app.LoaderManager.LoaderCallbacks<List<NewsFeedActivity>> {
 
     //Declare and initialise all necessary variables.
     private final String IS_SCREEN_ROTATED = "screenOrientation"; //Screen Orientation
@@ -38,7 +37,7 @@ public class MainActivity extends AppCompatActivity
     private TextView emptystate_textView;
     private SwipeRefreshLayout userSwipeRefreshLayout;
     private int pages = 1;
-    private ArrayList<NewsFeedActivity> datafeeds = new ArrayList<> ();
+    private ArrayList<NewsFeedActivity> data = new ArrayList<> ();
     private Adapter adapter = null;
     private View footerDisplay;
     private boolean onScreenOrientation = false;
@@ -108,7 +107,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt ( PAGE_SCROLL, pages );
-        outState.putSerializable ( DATA_FEED, datafeeds );
+        outState.putSerializable ( DATA_FEED, data );
         outState.putInt ( CURRENT_LIST_ITEM, item_listView.getSelectedItemPosition () );
         onScreenOrientation = true;
         outState.putBoolean ( IS_SCREEN_ROTATED, onScreenOrientation );
@@ -118,8 +117,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         pages = savedInstanceState.getInt ( PAGE_SCROLL, 1 );
-        datafeeds = (ArrayList<NewsFeedActivity>) savedInstanceState.getSerializable ( DATA_FEED );
-        adapter = new NewsFeedAdapter ( this, datafeeds );
+        data = (ArrayList<NewsFeedActivity>) savedInstanceState.getSerializable ( DATA_FEED );
+        adapter = new NewsFeedAdapter ( this, data );
         item_listView.setAdapter ( (ListAdapter) adapter );
         item_listView.setSelection ( savedInstanceState.getInt ( CURRENT_LIST_ITEM, 1 ) );
         loadingDisplayLayout.setVisibility ( View.GONE );
@@ -155,21 +154,21 @@ public class MainActivity extends AppCompatActivity
                 userSwipeRefreshLayout.setRefreshing ( false );
             }
             if (!newsList.isEmpty ()) {
-                if (datafeeds.isEmpty ()) {
+                if (data.isEmpty ()) {
                     adapter = new NewsFeedAdapter ( MainActivity.this, newsList );
                     item_listView.setAdapter ( (ListAdapter) adapter );
                 } else {
                     newsList.addAll ( newsList );
-                    adapter.notify ();
+                    adapter.notifyAll ();
                 }
-                datafeeds.addAll ( newsList );
+                data.addAll ( newsList );
 
-                Log.i ( TAG_MAIN, String.valueOf ( (R.string.loading_finished) + datafeeds.size () ) );
+                Log.i ( TAG_MAIN, String.valueOf ( (R.string.loading_finished) + data.size () ) );
                 item_listView.setOnItemClickListener ( new AdapterView.OnItemClickListener () {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Intent i = new Intent ( Intent.ACTION_VIEW );
-                        i.setData ( Uri.parse ( datafeeds.get ( position ).getWebUrl () ) );
+                        i.setData ( Uri.parse ( data.get ( position ).getWebUrl () ) );
                         startActivity ( i );
                     }
                 } );
@@ -182,9 +181,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     private void refresh() {
         if (isConnected ()) {
-            datafeeds.clear ();
+            data.clear ();
             pages = 1;
             getLoaderManager ().restartLoader ( 0, null, this );
         } else {

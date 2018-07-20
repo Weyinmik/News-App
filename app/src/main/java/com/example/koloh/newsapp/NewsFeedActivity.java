@@ -8,7 +8,7 @@ import java.io.Serializable;
  * It contains a default category of the news and title, as well as dates the news article was published.
  */
 public class NewsFeedActivity implements Serializable {
-
+    public static final long serialVersionUID = 21042018L;
     private String title, section, date, author, webUrl;
 
     public NewsFeedActivity(String title, String section, String date, String webUrl, String author) {
