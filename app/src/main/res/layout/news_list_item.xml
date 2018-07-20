@@ -7,6 +7,20 @@
     android:layout_gravity="center_vertical">
 
     <TextView
+        android:id="@+id/title_textview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/section_textview"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="TextView" />
+
+    <TextView
         android:id="@+id/section_textview"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -14,23 +28,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:gravity="center"
-        android:maxLines="3"
-
+        app:layout_constraintBottom_toBottomOf="@+id/date_textview"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="TextView" />
-
-    <TextView
-        android:id="@+id/title_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:textColor="@color/text_primary"
-        android:textSize="@dimen/text_primary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/section_textview"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="TextView" />
 
