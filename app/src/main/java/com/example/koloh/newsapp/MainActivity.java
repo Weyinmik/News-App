@@ -8,11 +8,18 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,124 +27,175 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<List<NewsFeedActivity>> {
 
-
-    /**
-     * URL for newsfeed data from the Guardian Api
-     */
-    public static final String GUARDIAN_REQUEST_URL =
-            "https://content.guardianapis.com/search?show-elements=all&order-by=relevance&show-tags=author&q=%22technology%20news%22&api-key=640deee2-109e-47f6-80d1-8038dc69cbcd";
-
-
-    private static final int NEWSFEED_LOADER_ID = 1;
-
-    /**
-     * Adapter for the list of newsfeed
-     */
-    private NewsFeedAdapter adapter;
-
-    /**
-     * TextView that is displayed when the list is empty
-     */
-    private TextView emptyStateTextView;
+    //Declare and initialise all necessary variables.
+    private final String IS_SCREEN_ROTATED = "screenOrientation"; //Screen Orientation
+    private final String TAG_MAIN = "MainActivity";
+    private final String CURRENT_LIST_ITEM = "currentItem";
+    private final String PAGE_SCROLL = "pages";
+    private final String DATA_FEED = "DataFeeds";
+    private final int ITEM_LOADER_ID = 0;
+    private ListView item_listView;
+    private TextView emptystate_textView;
+    private SwipeRefreshLayout userSwipeRefreshLayout;
+    private int pages = 1;
+    private ArrayList<NewsFeedActivity> datafeeds = new ArrayList<> ();
+    private Adapter adapter = null;
+    private View footerDisplay;
+    private boolean onScreenOrientation = false;
+    private LinearLayout loadingDisplayLayout;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate ( savedInstanceState );
         setContentView(R.layout.activity_main);
+        if (savedInstanceState != null) {
+            onScreenOrientation = savedInstanceState.getBoolean ( IS_SCREEN_ROTATED );
+        }
+        getLoaderManager ().initLoader ( ITEM_LOADER_ID, null, this );
+        item_listView = findViewById ( R.id.list );
+        userSwipeRefreshLayout = findViewById ( R.id.swiperefresh );
+        emptystate_textView = findViewById ( R.id.loading_error );
+        loadingDisplayLayout = findViewById ( R.id.loading_linear_layout );
+        footerDisplay = getLayoutInflater ().inflate ( R.layout.loading_list, null );
+        userSwipeRefreshLayout.setOnRefreshListener (
+                new SwipeRefreshLayout.OnRefreshListener () {
+                    @Override
+                    public void onRefresh() {
+                        Log.i ( TAG_MAIN, String.valueOf ( R.string.toast_refresh ) );
+                        refresh ();
+                    }
+                }
+        );
+        item_listView.setOnScrollListener ( new AbsListView.OnScrollListener () {
+            public int currentListScrollState;
+            public int currentVisibleListItemCount;
+            public int currentFirstVisibleListItem;
+            int totalListItemCount;
 
-        // Find a reference to the {@link ListView} in the layout
-        ListView newsfeedListView = (ListView) findViewById ( R.id.list );
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                this.currentFirstVisibleListItem = firstVisibleItem;
+                this.currentVisibleListItemCount = visibleItemCount;
+                this.totalListItemCount = totalItemCount;
+            }
 
-        // Create a new adapter that takes an empty list of newsfeed as input
-        adapter = new NewsFeedAdapter ( this, new ArrayList<NewsFeedActivity>());
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                this.currentListScrollState = scrollState;
+                this.isScrollCompleted ();
+            }
 
-        // Set the adapter on the {@link ListView}
-        // so the list can be populated in the user interface
-        newsfeedListView.setAdapter ( adapter );
-
-        emptyStateTextView = (TextView) findViewById ( R.id.no_article_text_view );
-        newsfeedListView.setEmptyView ( emptyStateTextView );
-
-        // Set an item click listener on the ListView, which sends an intent to a web browser
-        // to open a website with more information about the selected newsfeed.
-        newsfeedListView.setOnItemClickListener ( new AdapterView.OnItemClickListener () {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // Find the current newsfeed that was clicked on
-                NewsFeedActivity currentNewsfeed = adapter.getItem ( position );
-
-                // Convert the String URL into a URI object (to pass into the Intent constructor)
-                Uri newsfeedUri = Uri.parse ( currentNewsfeed.getUrl () );
-
-                // Create a new intent to view the newsfeed URI
-                Intent websiteIntent = new Intent ( Intent.ACTION_VIEW, newsfeedUri );
-
-                // Send the intent to launch a new activity
-                startActivity ( websiteIntent );
+            private void isScrollCompleted() {
+                if (this.currentVisibleListItemCount + currentFirstVisibleListItem == totalListItemCount && this.currentListScrollState == SCROLL_STATE_IDLE) {
+                    if (isConnected ()) {
+                        pages++;
+                        item_listView.addFooterView ( footerDisplay );
+                        item_listView.setSelection ( item_listView.getCount () - 1 );
+                        getLoaderManager ().restartLoader ( 0, null, MainActivity.this );
+                    }
+                }
             }
         } );
 
-        // Get a reference to the ConnectivityManager to check state of network connectivity
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService ( Context.CONNECTIVITY_SERVICE );
-
-        // Get details on the currently active default data network
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo ();
-
-        // If there is a network connection, fetch data
-        if (networkInfo != null && networkInfo.isConnected ()) {
-            // Get a reference to the LoaderManager, in order to interact with loaders.
-            LoaderManager loaderManager = getLoaderManager ();
-
-            // Initialize the loader. Pass in the int ID constant defined above and pass in null for
-            // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
-            // because this activity implements the LoaderCallbacks interface).
-            loaderManager.initLoader ( NEWSFEED_LOADER_ID, null, this );
+        if (isConnected ()) {
+            getLoaderManager ().initLoader ( ITEM_LOADER_ID, null, this );
         } else {
-            // Otherwise, display error
-            // First, hide loading indicator so error message will be visible
-            View loadingIndicator = findViewById ( R.id.indicator );
-            loadingIndicator.setVisibility ( View.GONE );
+            item_listView.setEmptyView ( emptystate_textView );
+            emptystate_textView.setText ( R.string.loading_fail_connection );
+        }
 
-            // Update empty state with no connection error message
-            emptyStateTextView.setText ( R.string.empty_text );
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt ( PAGE_SCROLL, pages );
+        outState.putSerializable ( DATA_FEED, datafeeds );
+        outState.putInt ( CURRENT_LIST_ITEM, item_listView.getSelectedItemPosition () );
+        onScreenOrientation = true;
+        outState.putBoolean ( IS_SCREEN_ROTATED, onScreenOrientation );
+        super.onSaveInstanceState ( outState );
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        pages = savedInstanceState.getInt ( PAGE_SCROLL, 1 );
+        datafeeds = (ArrayList<NewsFeedActivity>) savedInstanceState.getSerializable ( DATA_FEED );
+        adapter = new NewsFeedAdapter ( this, datafeeds );
+        item_listView.setAdapter ( (ListAdapter) adapter );
+        item_listView.setSelection ( savedInstanceState.getInt ( CURRENT_LIST_ITEM, 1 ) );
+        loadingDisplayLayout.setVisibility ( View.GONE );
+
+        super.onRestoreInstanceState ( savedInstanceState );
+    }
+
+
+    private boolean isConnected() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService ( Context.CONNECTIVITY_SERVICE );
+        NetworkInfo activeNetwork = null;
+        if (cm != null) {
+            activeNetwork = cm.getActiveNetworkInfo ();
+        }
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting ();
+    }
+
+    @Override
+    public Loader<List<NewsFeedActivity>> onCreateLoader(int id, Bundle args) {
+        return new NewsFeedLoader ( MainActivity.this, null, pages );
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<NewsFeedActivity>> loader, final List<NewsFeedActivity> newsList) {
+        if (!onScreenOrientation) {
+            item_listView.removeFooterView ( footerDisplay );
+            loadingDisplayLayout.setVisibility ( View.GONE );
+            if (userSwipeRefreshLayout.isRefreshing ()) {
+                userSwipeRefreshLayout.setRefreshing ( false );
+            }
+            if (!newsList.isEmpty ()) {
+                if (datafeeds.isEmpty ()) {
+                    adapter = new NewsFeedAdapter ( MainActivity.this, newsList );
+                    item_listView.setAdapter ( (ListAdapter) adapter );
+                } else {
+                    newsList.addAll ( datafeeds );
+                    adapter.notify ();
+                }
+                datafeeds.addAll ( newsList );
+
+                Log.i ( TAG_MAIN, String.valueOf ( (R.string.loading_finished) + datafeeds.size () ) );
+                item_listView.setOnItemClickListener ( new AdapterView.OnItemClickListener () {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent i = new Intent ( Intent.ACTION_VIEW );
+                        i.setData ( Uri.parse ( datafeeds.get ( position ).getWebUrl () ) );
+                        startActivity ( i );
+                    }
+                } );
+            } else {
+                item_listView.setEmptyView ( emptystate_textView );
+                emptystate_textView.setText ( R.string.data_error );
+            }
+        } else {
+            onScreenOrientation = false;
         }
     }
 
-
-    @Override
-    public Loader<List<NewsFeedActivity>> onCreateLoader(int i, Bundle bundle) {
-
-
-        // Create a new loader for the given URL
-        return new NewsFeedLoader ( this, GUARDIAN_REQUEST_URL );
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<NewsFeedActivity>> loader, List<NewsFeedActivity> newsList) {
-        // Hide loading indicator because the data has been loaded
-        View progressBar = findViewById ( R.id.indicator );
-        progressBar.setVisibility ( View.GONE );
-
-        // Set empty state text to display a text
-        emptyStateTextView.setText ( R.string.no_news_found );
-        // Clear the adapter of previous newsfeed data
-
-        adapter.clear ();
-        // check if there are articles then show them
-        // If there is a valid list of {@link NewsFeedActvity}s, then add them to the adapter's
-        // data set. This will trigger the ListView to update.
-        if (newsList != null && !newsList.isEmpty ()) {
-            adapter.addAll ( newsList );
-            emptyStateTextView.setVisibility ( View.GONE );
+    private void refresh() {
+        if (isConnected ()) {
+            datafeeds.clear ();
+            pages = 1;
+            getLoaderManager ().restartLoader ( 0, null, this );
+        } else {
+            Toast.makeText ( this, R.string.toast_no_internet, Toast.LENGTH_SHORT ).show ();
+            if (userSwipeRefreshLayout.isRefreshing ()) {
+                userSwipeRefreshLayout.setRefreshing ( false );
+            }
         }
     }
 
     @Override
     public void onLoaderReset(Loader<List<NewsFeedActivity>> loader) {
-        // clear adapter
-        adapter.clear();
+        loader.abandon ();
     }
-
 }

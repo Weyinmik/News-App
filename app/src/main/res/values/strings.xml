@@ -1,10 +1,31 @@
 <resources>
     <string name="app_name">News App</string>
 
-    <string name="empty_text">No internet connection.\nPlease check that you are connected to the internet</string>
+
+    <string name="loading">loading, please wait....</string>
+    <string name="loading_finished">onLoadFinished:  </string>
+    <string name="loading_fail_connection">No internet connection\nConnect to the internet then swipe down to refresh </string>
+    <string name="loading_list_items">Loading more stories …</string>
+    <string name="data_error">No stories found\nswipe down to refresh </string>
 
 
-    <string name="no_news_found">Currently there are no stories for you.\nPlease check back later.</string>
+    <string name="toast_no_internet">No internet connection found </string>
+    <string name="toast_refresh">onRefresh: called from SwipeRefreshLayout</string>
 
+    <!-- Guardian API JSON Keys-->
+    <string name="root_jsonobject_key">response</string>
+    <string name="result_jsonarry_key">results</string>
+    <string name="tag_jsonarry_key">tags</string>
+    <string name="WebTitle_jsonprimitive_key">webTitle</string>
+    <string name="sectionName_jsonprimitive_key">sectionName</string>
+    <string name="webPublicationDate_jsonprimitive_key">webPublicationDate</string>
+    <string name="webUrl_jsonprimitive_key">webUrl</string>
+
+    <string name="url_request_method">GET</string>
+
+
+    <!-- NewsQueryUtils String values-->
+
+    <string name="source">http://content.guardianapis.com/search?</string>
 
 </resources>

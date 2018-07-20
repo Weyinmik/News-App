@@ -1,5 +1,8 @@
 package com.example.koloh.newsapp;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,51 +13,44 @@ import java.util.List;
 
 public class NewsFeedAdapter extends ArrayAdapter<NewsFeedActivity> {
 
-
-    public NewsFeedAdapter(MainActivity context, List<NewsFeedActivity> newsfeed) {
-                super ( context, 0, newsfeed );
-
-        }
-
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        // Check if there is an existing list item view (called convertView) that we can reuse,
-        // otherwise, if convertView is null, then inflate a new list item layout.
-        View listItemView = convertView;
-        if (listItemView == null) {
-            listItemView = LayoutInflater.from ( getContext () ).inflate (
-                    R.layout.news_list_item, parent, false );
-        }
-
-
-        NewsFeedActivity currentNewsItem = getItem ( position );
-
-        String originalDate = currentNewsItem.getDate ();
-        String finalDate;
-        String finalTime;
-
-        String[] parts = originalDate.split ( "T" );
-        finalDate = parts[0];
-        finalTime = parts[1];
-        String finalTimeLessZ = finalTime.substring ( 0, finalTime.lastIndexOf ( "Z" ) );
-
-        TextView titleTextView = (TextView) listItemView.findViewById ( R.id.title );
-        titleTextView.setText ( currentNewsItem.getTitle () );
-
-
-        TextView sectionTextView = (TextView) listItemView.findViewById ( R.id.section );
-        sectionTextView.setText ( currentNewsItem.getSection () );
-
-
-        TextView dateTextView = (TextView) listItemView.findViewById ( R.id.date );
-        dateTextView.setText ( finalDate );
-
-        TextView timeTextView = (TextView) listItemView.findViewById ( R.id.time_text_view );
-        timeTextView.setText ( finalTimeLessZ );
-
-        return listItemView;
+    NewsFeedAdapter(@NonNull Context context, @NonNull List<NewsFeedActivity> newsList) {
+        super ( context, 0, newsList );
     }
 
 
+    @NonNull
+    @Override
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        ViewHolder item_holder;
+        if (convertView == null) {
+            convertView = LayoutInflater.from ( getContext () ).inflate ( R.layout.news_list_item, parent, false );
+            item_holder = new ViewHolder ( convertView );
+            convertView.setTag ( item_holder );
+        } else {
+            item_holder = (ViewHolder) convertView.getTag ();
+
+        }
+        item_holder.title.setText ( getItem ( position ).getTitle () );
+        item_holder.section.setText ( getItem ( position ).getSection () );
+        item_holder.date.setText ( getItem ( position ).getDate () );
+        item_holder.author.setText ( getItem ( position ).getAuthor () );
+        return convertView;
+    }
+
+
+    class ViewHolder {
+        private TextView title;
+        private TextView section;
+        private TextView date;
+        private TextView author;
+
+        public ViewHolder(View view) {
+            this.title = view.findViewById ( R.id.title_textview );
+            this.section = view.findViewById ( R.id.section_textview );
+            this.date = view.findViewById ( R.id.date_textview );
+            this.author = view.findViewById ( R.id.author_textview );
+
+        }
+    }
 }
+
