@@ -26,6 +26,6 @@
 
     <!-- NewsQueryUtils String values-->
 
-    <string name="source">http://content.guardianapis.com/search?</string>
+    <string name="api_key">640deee2-109e-47f6-80d1-8038dc69cbcd</string>
 
 </resources>
