@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity
         }
         return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting ();
+
     }
 
     @Override
@@ -158,7 +159,7 @@ public class MainActivity extends AppCompatActivity
                     adapter = new NewsFeedAdapter ( MainActivity.this, newsList );
                     item_listView.setAdapter ( (ListAdapter) adapter );
                 } else {
-                    newsList.addAll ( datafeeds );
+                    newsList.addAll ( newsList );
                     adapter.notify ();
                 }
                 datafeeds.addAll ( newsList );
