@@ -200,3 +200,6 @@ public class MainActivity extends AppCompatActivity
         loader.abandon ();
     }
 }
+
+//References: @Ahmed3010 has helped greatly with explanations and corrections in order for me to complete this project.
+// githublink: https://github.com/ahmed3010; slackname:@Ahmad
