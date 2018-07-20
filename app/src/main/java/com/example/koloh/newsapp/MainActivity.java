@@ -158,8 +158,8 @@ public class MainActivity extends AppCompatActivity
                     adapter = new NewsFeedAdapter ( MainActivity.this, newsList );
                     item_listView.setAdapter ( (ListAdapter) adapter );
                 } else {
-                    newsList.addAll ( newsList );
-                    adapter.notifyAll ();
+                    data.addAll ( newsList );
+                    adapter.notify ();
                 }
                 data.addAll ( newsList );
 

@@ -12,20 +12,10 @@
     <string name="toast_no_internet">No internet connection found </string>
     <string name="toast_refresh">onRefresh: called from SwipeRefreshLayout</string>
 
-    <!-- Guardian API JSON Keys-->
-    <string name="root_jsonobject_key">response</string>
-    <string name="result_jsonarry_key">results</string>
-    <string name="tag_jsonarry_key">tags</string>
-    <string name="WebTitle_jsonprimitive_key">webTitle</string>
-    <string name="sectionName_jsonprimitive_key">sectionName</string>
-    <string name="webPublicationDate_jsonprimitive_key">webPublicationDate</string>
-    <string name="webUrl_jsonprimitive_key">webUrl</string>
-
-    <string name="url_request_method">GET</string>
-
 
     <!-- NewsQueryUtils String values-->
 
     <string name="api_key">640deee2-109e-47f6-80d1-8038dc69cbcd</string>
+
 
 </resources>
